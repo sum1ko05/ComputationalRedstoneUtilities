@@ -1,0 +1,24 @@
+;WIP! INSTRUCTION SET IS STILL UNDER DEVELOPEMENT! 
+machine .REM1           ; Specifying a redstone computer to to make a binary for
+
+section .code           ; Next line is a logical 0x0 code address
+                        ; You need to set the offset at bin2shcem translator
+_start                  ; This line is a logical entry point
+    set r1 1            ; Setting up first two members of Fibonacci sequence
+    set r2 1
+    set r10 5           ; Anount of iterations
+    set r11 2           ; Current writting address
+
+    .main_loop
+    add r1 r2 r3        ; Calculate the value for current iteration
+    mov r2 r1           ; Pseudo instruction, copy value to r1 from r2
+    mov r3 r2
+    lod r3 r0 r11
+    inc r11             ; Pseudo instruction, increase r11 value by 1
+    dec r10             ; Pseudo instruction, decrease r10 value by 1
+    brh 0 .mail_loop    ; Repeat the previous block, if r10 isn't 0
+
+section .data           ; This is a description of initial saved data
+                        ; (rn only "real" addresses are available)
+    real 0x0 <- 1       ; The value at 0x0 and 0x1 addresses is 1
+    real 0x1 <- 1       ; The default numerical system is decimal
