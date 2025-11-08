@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 namespace formatters
 {
@@ -43,6 +44,18 @@ namespace formatters
                     lines.push_back(single_line);
                 }
             }
+        }
+    }
+
+    void tokenize_string(const std::string& str,
+                         std::vector<std::string>& tokens,
+                         const char& whitespace)
+    {
+        std::stringstream stream(str);
+        std::string single_token;
+        while(std::getline(stream, single_token, whitespace))
+        {
+            tokens.push_back(single_token);
         }
     }
 }

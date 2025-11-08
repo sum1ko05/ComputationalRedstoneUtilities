@@ -10,4 +10,7 @@ namespace formatters
                                const std::string& comment = ";");
     void extract_lines_from_file(std::ifstream& in, 
                                  std::vector<std::string>& lines);
+    void tokenize_string(const std::string& str,
+                         std::vector<std::string>& tokens,
+                         const char& whitespace = ' ');
 }
