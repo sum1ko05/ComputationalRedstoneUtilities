@@ -5,6 +5,7 @@
 
 #include <validators.hpp>
 #include <formatters.hpp>
+#include <base_translator.hpp>
 
 int main(int argc, char** argv)
 {
@@ -18,18 +19,19 @@ int main(int argc, char** argv)
     std::vector<std::string> text;
 
     formatters::extract_lines_from_file(asm_file, text);
+    asm_file.close();
+
     std::vector<std::string> tokens;
+
+    translators::BaseTranslator translator;
+
     for(const std::string& line : text)
     {
-        //std::cout << line << std::endl;
         formatters::tokenize_string(line, tokens);
-        for(const std::string& token : tokens)
-        {
-            std::cout << "[" << token << "] ";
-        }
-        std::cout << std::endl;
+        translator.add_line(tokens);
+
         tokens.clear();
     }
 
-    asm_file.close();
+    translator.print();
 }

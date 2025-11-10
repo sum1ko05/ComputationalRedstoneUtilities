@@ -8,6 +8,11 @@
 
 namespace formatters
 {
+    /// @brief Returns a code line without comments and unnecessary whitespaces
+    /// @param str Reference code line, from what comments and whitespaces should be removed
+    /// @param whitespace String containing whitespaces to remove
+    /// @param comment String containing comment starters to remove
+    /// @return `str`, but without comments and unnecessary whitespaces. `str` will not be changed
     std::string trim_code_line(const std::string& str,
                                const std::string& whitespace,
                                const std::string& comment)
@@ -29,6 +34,9 @@ namespace formatters
         return decommentedStr.substr(lineBegin, lineRange);
     }
 
+    /// @brief Read lines from stream into a vector of strings and trim them
+    /// @param in Input file stream
+    /// @param lines Vector of lines to store into
     void extract_lines_from_file(std::ifstream& in, 
                                  std::vector<std::string>& lines)
     {
@@ -47,6 +55,10 @@ namespace formatters
         }
     }
 
+    /// @brief Break a string to vector of words
+    /// @param str String to break to tokens
+    /// @param tokens Vector of tokens to store into
+    /// @param whitespace Whitespace char to remove from `str`
     void tokenize_string(const std::string& str,
                          std::vector<std::string>& tokens,
                          const char& whitespace)

@@ -1,7 +1,9 @@
 #pragma once
 
+#include <string>
+
 namespace validators
 {
     int validate_asm_file(int argc, char** argv);
-    int check_target_machine();
+    int validate_file_structure(const std::string& target_machine);
 }
