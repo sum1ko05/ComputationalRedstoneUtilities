@@ -10,9 +10,16 @@
 int main(int argc, char** argv)
 {
     // Validation
-    int validator_return_code = validators::validate_asm_file(argc, argv);
-    if(validator_return_code != 0) return validator_return_code;
-
+    try
+    {
+        validators::validate_asm_file(argc, argv);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return 3;
+    }
+    
     std::ifstream asm_file;
     asm_file.open(argv[1]);
 
@@ -34,4 +41,18 @@ int main(int argc, char** argv)
     }
 
     translator.print();
+
+    std::filesystem::path bin_file_path = argv[1];
+    bin_file_path.replace_extension("bin");
+
+    std::cout << bin_file_path << std::endl;
+
+    std::ofstream bin_file;
+    bin_file.open(bin_file_path, std::ios::binary);
+
+    translator.write_to_binary(bin_file);
+
+    bin_file.close();
+
+    return 0;
 }

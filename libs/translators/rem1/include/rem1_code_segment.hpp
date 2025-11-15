@@ -4,6 +4,16 @@
 #include <vector>
 #include <cstdint>
 
+#include <base_segment.hpp>
+
+namespace rem1
+{
+    class Rem1CodeSegment: public translators::BaseSegment
+    {
+        
+    };
+}
+/*
 namespace translators
 {
     class BaseSegment
@@ -14,7 +24,6 @@ namespace translators
 
     public:
         BaseSegment(){};
-        ~BaseSegment(){};
 
         std::vector<uint8_t> get_binary() const {return m_binary;};
 
@@ -25,3 +34,4 @@ namespace translators
         void print() const;
     };
 }
+*/

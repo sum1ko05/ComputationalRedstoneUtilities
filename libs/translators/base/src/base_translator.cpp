@@ -1,6 +1,7 @@
 #include "base_translator.hpp"
 
 #include <iostream>
+#include <fstream>
 
 namespace translators
 {
@@ -9,6 +10,29 @@ namespace translators
     bool BaseTranslator::is_text_empty() const
     {
         return m_text.empty();
+    }
+
+    /// @brief Check whether text is intended for target machine
+    /// @param target_keyword Common target machine keyword
+    /// @param target_name Specific target machine name
+    /// @return Return whether text is intended for target machine
+    bool BaseTranslator::is_text_for_target_machine(const std::string& target_keyword,
+                                                    const std::string& target_name) const
+    {
+        for(const std::vector<std::string>& line : m_text)
+        {
+            // First check only for keyword as 1st token in line + safeguard
+            if(line.size() == 2 && line[0] == target_keyword)
+            {
+                // Check 2nd token if it's the target machine info
+                // We're also assuming, that code is targeted only to one machine
+                // Then there's no point of checking more lines
+                if(line[1] == target_name) return true;
+                else return false;
+            }
+        }
+        // In case if we didn't find anything about target machine
+        return false;
     }
     
     /// @brief Add segment on the back
@@ -82,5 +106,13 @@ namespace translators
             }
             std::cout << std::endl;
         }
+    }
+
+    void BaseTranslator::write_to_binary(std::ofstream& out)
+    {
+        // Placeholder output to test writting to binary file
+        std::string placeholder = "Placeholder output, please change class for real one, oguzok.";
+        out << placeholder;
+        out << (uint8_t)6 << (uint8_t)7;
     }
 }
