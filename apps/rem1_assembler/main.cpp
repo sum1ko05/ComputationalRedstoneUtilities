@@ -5,7 +5,9 @@
 
 #include <validators.hpp>
 #include <formatters.hpp>
-#include <base_translator.hpp>
+//#include <base_translator.hpp>
+#include <rem1_translator.hpp>
+#include <rem1_translator.hpp>
 
 int main(int argc, char** argv)
 {
@@ -19,9 +21,11 @@ int main(int argc, char** argv)
         std::cerr << e.what() << '\n';
         return 3;
     }
+
+    const char* file_name = argv[1];
     
     std::ifstream asm_file;
-    asm_file.open(argv[1]);
+    asm_file.open(file_name);
 
     std::vector<std::string> text;
 
@@ -30,7 +34,7 @@ int main(int argc, char** argv)
 
     std::vector<std::string> tokens;
 
-    translators::BaseTranslator translator;
+    rem1::Rem1Translator translator;
 
     for(const std::string& line : text)
     {
@@ -41,6 +45,27 @@ int main(int argc, char** argv)
     }
 
     translator.print();
+
+    //translators::BaseSegment base_code_seg("code");
+    rem1::Rem1CodeSegment base_code_seg("code");
+    translators::BaseSegment base_data_seg("data");
+
+    translator.add_segment(base_code_seg);
+    translator.add_segment(base_data_seg);
+
+    std::cout << "\n";
+
+    translator.load_segment(base_code_seg, "section", ".code");
+    base_code_seg.prepare_text();
+    base_code_seg.convert_to_binary();
+    base_code_seg.print();
+
+    std::cout << "\n";
+
+    translator.load_segment(base_data_seg, "section", ".data");
+    base_data_seg.print();
+
+    translator.append_to_binary_from_segment(base_code_seg);
 
     std::filesystem::path bin_file_path = argv[1];
     bin_file_path.replace_extension("bin");

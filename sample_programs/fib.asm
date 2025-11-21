@@ -16,6 +16,7 @@ section .code           ; Next line is a 0x0 code address
     inc r11             ; Pseudo instruction, increase r11 value by 1
     dec r10             ; Pseudo instruction, decrease r10 value by 1
     brh 0 .main_loop    ; Repeat the previous block, if r10 isn't 0
+    hlt                 ; Stop the program
 
 section .data           ; This is a description of initial saved data
                         ; (rn only "real" addresses are available)

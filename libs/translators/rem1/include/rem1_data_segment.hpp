@@ -8,13 +8,10 @@
 
 namespace rem1
 {
-    class Rem1CodeSegment: public translators::BaseSegment
+    class Rem1DataSegment: public translators::BaseSegment
     {
-    private:
-        void preprocess_labels();
-
     public:
-        Rem1CodeSegment(const std::string& name): BaseSegment(name){};
+        Rem1DataSegment(const std::string& name): BaseSegment(name){};
 
         void prepare_text() override;
         void convert_to_binary() override;
