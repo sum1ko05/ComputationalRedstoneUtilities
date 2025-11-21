@@ -29,7 +29,7 @@ namespace translators
         /// @warning Method from base class does nothing. 
         ///          Implement it yourself in inherited classes
         virtual void prepare_text(){};
-        /// @brief Generates vector of bytes, based on segment text
+        /// @brief Generates vector of bytes, based on segment text, and stores it in `m_binary`
         /// @warning Method from base class does nothing. 
         ///          Implement it yourself in inherited classes
         virtual void convert_to_binary(){};

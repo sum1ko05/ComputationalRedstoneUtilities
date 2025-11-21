@@ -72,12 +72,58 @@ namespace rem1
             }
         }
     }
+
+    /// @brief Converts pseudo instructions to actual instructions, readable for translator
+    void Rem1CodeSegment::preprocess_pseudo_instructions()
+    {
+        std::regex pseudo_instruction_regex("mov|cmp|inc|dec|lsh");
+
+        std::string opcode;
+
+        for(std::vector<std::string>& line : m_text)
+        {
+            opcode = line[0];
+            // We are sure that line has at least 1 token
+            if(std::regex_match(opcode, pseudo_instruction_regex))
+            {
+                if(opcode == "mov")
+                {
+                    line[0] = "add";
+                    // Add r0 operand after 2nd token
+                    line.insert(line.begin() + 2, "r0");
+                }
+                if(opcode == "cmp")
+                {
+                    line[0] = "sub";
+                    line.push_back("r0");
+                }
+                if(opcode == "inc")
+                {
+                    line[0] = "adi";
+                    line.push_back("1");
+                }
+                if(opcode == "dec")
+                {
+                    line[0] = "adi";
+                    line.push_back("-1");
+                }
+                if(opcode == "lsh")
+                {
+                    line[0] = "add";
+                    // Add Reg A operand after 2nd token
+                    line.insert(line.begin() + 2, line[1]);
+                }
+            }
+        }
+    }
     
     /// @brief Makes text of segment readable for translator
     ///
-    /// It includes translating labels to numbers
+    /// It includes translating pseudo instructions to actual ones, 
+    /// labels to numbers
     void Rem1CodeSegment::prepare_text()
     {
+        preprocess_pseudo_instructions();
         preprocess_labels();
     }
 
@@ -228,7 +274,7 @@ namespace rem1
                 // Extracting 8 bit number
                 try
                 {
-                    operand = static_cast<uint8_t>(std::stoi(line[2]) & 0xFF);
+                    operand = static_cast<uint8_t>(std::stoi(line[2], nullptr, 0) & 0xFF);
                     instruction |= static_cast<uint16_t>(operand);
                 }
                 catch(const std::exception& e)
@@ -252,7 +298,7 @@ namespace rem1
                 // Extracting 8 bit number
                 try
                 {
-                    operand = static_cast<uint8_t>(std::stoi(line[2]) & 0xFF);
+                    operand = static_cast<uint8_t>(std::stoi(line[2], nullptr, 0) & 0xFF);
                     instruction |= static_cast<uint16_t>(operand);
                 }
                 catch(const std::exception& e)
@@ -269,7 +315,7 @@ namespace rem1
                 // Extracting 10 bit address
                 try
                 {
-                    operand = static_cast<uint16_t>(std::stoi(line[1]) & 0x3FF);
+                    operand = static_cast<uint16_t>(std::stoi(line[1], nullptr, 0) & 0x3FF);
                     instruction |= static_cast<uint16_t>(operand);
                 }
                 catch(const std::exception& e)
@@ -296,7 +342,7 @@ namespace rem1
                 // Extracting 10 bit address
                 try
                 {
-                    operand = static_cast<uint16_t>(std::stoi(line[2]) & 0x3FF);
+                    operand = static_cast<uint16_t>(std::stoi(line[2], nullptr, 0) & 0x3FF);
                     instruction |= static_cast<uint16_t>(operand);
                 }
                 catch(const std::exception& e)
@@ -313,7 +359,7 @@ namespace rem1
                 // Extracting 10 bit address
                 try
                 {
-                    operand = static_cast<uint16_t>(std::stoi(line[1]) & 0x3FF);
+                    operand = static_cast<uint16_t>(std::stoi(line[1], nullptr, 0) & 0x3FF);
                     instruction |= static_cast<uint16_t>(operand);
                 }
                 catch(const std::exception& e)
@@ -339,10 +385,10 @@ namespace rem1
                     instruction |= (static_cast<uint16_t>(operand) << 8);
                 }
                 else throw std::logic_error("Syntax error! Operands didn't match to standard register format!");
-                // Extracting 8 bit number
+                // Extracting 4 bit number
                 try
                 {
-                    operand = static_cast<uint8_t>(std::stoi(line[2]) & 0xF);
+                    operand = static_cast<uint8_t>(std::stoi(line[2], nullptr, 0) & 0xF);
                     instruction |= static_cast<uint16_t>(operand) << 4;
                 }
                 catch(const std::exception& e)
@@ -371,10 +417,10 @@ namespace rem1
                     instruction |= (static_cast<uint16_t>(operand) << 8);
                 }
                 else throw std::logic_error("Syntax error! Operands didn't match to standard register format!");
-                // Extracting 8 bit number
+                // Extracting 4 bit number
                 try
                 {
-                    operand = static_cast<uint8_t>(std::stoi(line[2]) & 0xF);
+                    operand = static_cast<uint8_t>(std::stoi(line[2], nullptr, 0) & 0xF);
                     instruction |= static_cast<uint16_t>(operand) << 4;
                 }
                 catch(const std::exception& e)

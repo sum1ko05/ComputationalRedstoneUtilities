@@ -28,10 +28,8 @@ namespace rem1
 
     void Rem1Translator::write_to_binary(std::ofstream& out)
     {
-        //std::cout << "Binary output started!\n";
         for(const uint8_t& byte : m_binary)
         {
-            //std::cout << static_cast<int>(byte) << " ";
             out << byte;
         }
     }

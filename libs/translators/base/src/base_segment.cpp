@@ -16,7 +16,6 @@ namespace translators
     {
         for(const std::vector<std::string>& line : m_text)
         {
-        //std::cout << line << std::endl;
             for(const std::string& token : line)
             {
                 std::cout << "[" << token << "] ";

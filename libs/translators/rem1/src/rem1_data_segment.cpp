@@ -1,29 +1,50 @@
 #include "rem1_data_segment.hpp"
 
 #include <iostream>
+#include <map>
+#include <cstdint>
 
-/*
-namespace translators
-{   
-    /// @brief Add new line to the text of the segment
-    /// @param line String to add
-    void BaseSegment::add_line(const std::vector<std::string>& line)
+namespace rem1
+{
+    /// @brief Makes text of segment readable for translator
+    ///
+    /// (no preprocessing is needed for REM-1 assembly sources)
+    void Rem1DataSegment::prepare_text()
     {
-        m_text.push_back(line);
+
     }
 
-    /// @brief Print the whole text of the segment with token highlighting
-    void BaseSegment::print() const
+    /// @brief Generates vector of bytes, based on segment text, and stores it in `m_binary`
+    void Rem1DataSegment::convert_to_binary()
     {
+        std::map<uint16_t, uint8_t> preinit_data_map;
+
+        uint16_t address;
+        uint8_t value;
+        uint16_t max_address = 0;
+
+        // Extract initial data
         for(const std::vector<std::string>& line : m_text)
         {
-        //std::cout << line << std::endl;
-            for(const std::string& token : line)
+            if(line[0] == "real")
             {
-                std::cout << "[" << token << "] ";
+                if(line.size() == 4)
+                {
+                    address = static_cast<uint16_t>(std::stoi(line[1], nullptr, 0) & 0xFFFF);
+                    value = static_cast<uint8_t>(std::stoi(line[3], nullptr, 0) & 0xFF);
+                    preinit_data_map.insert({address, value});
+                    max_address = std::max(max_address, address);
+                }
+                else throw std::logic_error("Data initialisation line should have 2 arguments and the token in the middle");
             }
-            std::cout << std::endl;
+            else throw std::logic_error("Only real addresses are implemented now");
+        }
+
+        // Put all of this data to m_binary
+        m_binary = std::vector<uint8_t>(max_address + 1, 0);
+        for(const std::pair<uint16_t, uint8_t>& cell : preinit_data_map)
+        {
+            m_binary[cell.first] = cell.second;
         }
     }
 }
-*/

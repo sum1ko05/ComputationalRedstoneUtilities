@@ -5,8 +5,6 @@
 
 #include <validators.hpp>
 #include <formatters.hpp>
-//#include <base_translator.hpp>
-#include <rem1_translator.hpp>
 #include <rem1_translator.hpp>
 
 int main(int argc, char** argv)
@@ -24,6 +22,7 @@ int main(int argc, char** argv)
 
     const char* file_name = argv[1];
     
+    // Loading content of asm source to memory
     std::ifstream asm_file;
     asm_file.open(file_name);
 
@@ -34,8 +33,8 @@ int main(int argc, char** argv)
 
     std::vector<std::string> tokens;
 
+    // Adding lines to translator in convenient form
     rem1::Rem1Translator translator;
-
     for(const std::string& line : text)
     {
         formatters::tokenize_string(line, tokens);
@@ -44,33 +43,26 @@ int main(int argc, char** argv)
         tokens.clear();
     }
 
-    translator.print();
+    // Convert assembly source to machine code
+    rem1::Rem1CodeSegment code_seg("code");
+    rem1::Rem1DataSegment data_seg("data");
 
-    //translators::BaseSegment base_code_seg("code");
-    rem1::Rem1CodeSegment base_code_seg("code");
-    translators::BaseSegment base_data_seg("data");
+    translator.add_segment(code_seg);
+    translator.add_segment(data_seg);
 
-    translator.add_segment(base_code_seg);
-    translator.add_segment(base_data_seg);
+    translator.load_segment(code_seg, "section", ".code");
+    code_seg.prepare_text();
+    code_seg.convert_to_binary();
 
-    std::cout << "\n";
+    translator.load_segment(data_seg, "section", ".data");
+    data_seg.convert_to_binary();
 
-    translator.load_segment(base_code_seg, "section", ".code");
-    base_code_seg.prepare_text();
-    base_code_seg.convert_to_binary();
-    base_code_seg.print();
+    translator.append_to_binary_from_segment(data_seg);
+    translator.append_to_binary_from_segment(code_seg);
 
-    std::cout << "\n";
-
-    translator.load_segment(base_data_seg, "section", ".data");
-    base_data_seg.print();
-
-    translator.append_to_binary_from_segment(base_code_seg);
-
-    std::filesystem::path bin_file_path = argv[1];
+    // Write result to binary file
+    std::filesystem::path bin_file_path = file_name;
     bin_file_path.replace_extension("bin");
-
-    std::cout << bin_file_path << std::endl;
 
     std::ofstream bin_file;
     bin_file.open(bin_file_path, std::ios::binary);
